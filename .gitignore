@@ -1,0 +1,8 @@
+Lab*/app
+*.vscode
+
+#Executables
+*.o
+*.exe
+lab1
+debug_app
