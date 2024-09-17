@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
         // This will also show a fail message as the succeed variable was never set to true
     // Modify this loop (can be while, for, or any type of loop) and add your code
     // You can define other functions to use outside of the main function if you wish
-    for (int i=0; i<100; i++)
+    for (int i=0; i<2000; i++)
     {
         robot.x += 1;
 
