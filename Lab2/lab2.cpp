@@ -19,30 +19,19 @@ const int goal_tol {100};                   //Minimum distance in x,y between ro
 const int robot_y_min {500};                //Minimum robot y position
 const int goal_y_max {300};                 //Maximum goal y position
 int obj_x, obj_y, obj_width, obj_height;    //Parameters for object position/size
-int num_objects {0};                        //Number of obstacles in environment
+int num_objects {15};                       //Number of objects in environment
 
-// Grid utility class. Students will not use this for lab 1
+// Grid utility class
 grid_util grid(width, height, min_obj_size, max_obj_size);
 
-// Random generator to spawn robot and goal
+// Random generator
 random_generator rand_gen;
 
-// Vector of robot positions to pass to renderer code. Update this after each time step!
+// Vector of velocity commands
 std::vector<std::vector<int>> robot_pos;
 
-// Did mission succeed? Update this to make sure it succeeds if robot reaches goal, failure if it hits wall.
+// Did mission succeed?
 bool succeed;
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++WRITE ANY FUNCTIONS OR GLOBAL VARIABLES HERE+++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// e.g. void my_func() {}
-// e.g. int a = 5;
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 int main(int argc, char const *argv[])
 {
@@ -59,16 +48,18 @@ int main(int argc, char const *argv[])
     // create copies of robot and goal with their initial positions for purpose of render functions
     Object robot_init = robot;
     Object goal_init = goal;
+    // also create a copy for predicting collisions
+    Object robot_copy = robot;
 
-    // uncomment this line to write the grid to csv to see the grid as a csv
+    // Uncomment this line to write the grid to csv to see the grid as a csv
     // grid.writeGridToCSV("grid.csv");
 
-    // place the first robot position to robot_pos
     robot_pos.push_back({robot.x, robot.y});
 
     // maximum count. Close the loop after 3600 iterations. As the window is displayed at 60fps, this is 60 seconds.
-    int max_count=0;
+    int max_count = 0;
 
+    // main loop
     while (true)
     {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -86,17 +77,14 @@ int main(int argc, char const *argv[])
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++END YOUR CODE HERE++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        // place the current robot position at the time step to robot_pos
         robot_pos.push_back({robot.x, robot.y});
         max_count++;
+
         if (max_count>=3600) {
             std::cout << "=====1 minute reached with no solution=====" << std::endl;
             break;
         }
     }
-    
-    // send the results of the code to the renderer
     render_window(robot_pos, objects, robot_init, goal_init, width, height, succeed);
     return 0;
 }
