@@ -69,6 +69,11 @@ int main(int argc, char const *argv[])
     // maximum count. Close the loop after 3600 iterations. As the window is displayed at 60fps, this is 60 seconds.
     int max_count=0;
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++DEFINE ANY LOCAL VARIABLE HERE+++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    // main while loop
     while (true)
     {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -90,6 +95,8 @@ int main(int argc, char const *argv[])
         // place the current robot position at the time step to robot_pos
         robot_pos.push_back({robot.x, robot.y});
         max_count++;
+
+        // if more than a minute passed (in render window), exit
         if (max_count>=3600) {
             std::cout << "=====1 minute reached with no solution=====" << std::endl;
             break;

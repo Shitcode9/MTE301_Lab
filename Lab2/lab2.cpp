@@ -80,6 +80,7 @@ int main(int argc, char const *argv[])
         robot_pos.push_back({robot.x, robot.y});
         max_count++;
 
+        // if more than a minute passed (in render window), exit
         if (max_count>=3600) {
             std::cout << "=====1 minute reached with no solution=====" << std::endl;
             break;
