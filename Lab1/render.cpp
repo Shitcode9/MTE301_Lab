@@ -85,9 +85,17 @@ void render_window(
     int del_x, del_y, vel_x, vel_y;
 
     //==========Setup==========
+
+    // get the screen size to center the window
+    int desktop_width = sf::VideoMode::getDesktopMode().width;
+    int desktop_height = sf::VideoMode::getDesktopMode().height;
+    int middle_x = (desktop_width/2) - width/2;
+    int middle_y = (desktop_height/2) - width/2;    
+
     // create the window
     sf::RenderWindow window(sf::VideoMode(width, height), "MTE301 Lab 1");
     window.setFramerateLimit(60);
+    window.setPosition(sf::Vector2i(middle_x, middle_y));
 
     // create the robot
     sf::CircleShape robot_draw(robot.width/2);
