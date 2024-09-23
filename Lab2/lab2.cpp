@@ -13,9 +13,9 @@ const int min_obj_size {50};                //Maximum object dimension
 const int max_obj_size {100};               //Maximum object dimension
 const int goal_width {100};                 //Goal width
 const int goal_height {100};                //Goal heigth
-const int robot_tol {200};                  //Tolerance for robot spawn point
-const int occupancy_tol {50};               //Minimum distance between all objects that spawn
-const int goal_tol {100};                   //Minimum distance in x,y between robot and goal
+const int robot_tol {50};                  //Tolerance for robot spawn point
+const int occupancy_tol {30};               //Minimum distance between all objects that spawn
+const int goal_tol {50};                   //Minimum distance in x,y between robot and goal
 const int robot_y_min {500};                //Minimum robot y position
 const int goal_y_max {300};                 //Maximum goal y position
 int obj_x, obj_y, obj_width, obj_height;    //Parameters for object position/size

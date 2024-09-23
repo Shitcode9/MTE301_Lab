@@ -1,11 +1,13 @@
 // utility classes and functions
 // All utility here only rely on already installed C++ libraries
 
-#include <random>
-#include "utils.h"
-#include <iostream>
+#include <algorithm>
 #include <fstream>
+#include <iostream>
+#include <random>
 #include <string>
+
+#include "utils.h"
 
 random_generator::random_generator(): gen(rd()) {}
 
@@ -14,6 +16,7 @@ int random_generator::create_random(int lower_bnd, int upper_bnd) {
     return distr(gen);
 }
 
+// constructor
 grid_util::grid_util(int width, int height, int min_size, int max_size) : 
     env_width(width), 
     env_height(height),
@@ -21,8 +24,24 @@ grid_util::grid_util(int width, int height, int min_size, int max_size) :
     max_obj_size(max_size)
 {
     grid = std::vector<std::vector<int>>(env_height, std::vector<int>(env_width, 0));
+    // grid is square, so subgrids are also square
+    this->num_subgrids = 4;
+    int num_subgrids_x = std::sqrt(this->num_subgrids);
+    this->subgrids_size = env_width/num_subgrids_x;
+
+    int x = 0, y = 0;
+    // subgrids has 3 elements (O, x, y) where O counts how many objects are in grid: 0, 1, 2, etc..
+    // populate subgrids from left-right(x+), then top-down(y+), starting from top row
+    for (int j = 0; j<num_subgrids_x; j++) {
+        for (int i = 0; i<num_subgrids_x; i++) {
+            x = i*this->subgrids_size;
+            y = j*this->subgrids_size;
+            subgrids.push_back({0, x, y});
+        }
+    }
 }
 
+// create a single object. for robot and goal.
 Object grid_util::create_object(
     grid_util & grid, 
     random_generator &rand_gen, 
@@ -44,32 +63,46 @@ Object grid_util::create_object(
     return rect;
 }
 
+// create multiple objects. for the obstacles
 std::vector<Object> grid_util::create_objects(random_generator &rand_gen, int tol, int num_objects) {
     std::vector<Object>objects(num_objects);
-    // std::cout << "Creating " << num_objects << " rectangle objects in the environment" << std::endl;
     int obj_x, obj_y, obj_width, obj_height;
     bool limit_reached=false;
     int max_iter = 0;
+    int min_x, min_y, max_x, max_y;
     for (int i = 0; i < num_objects; i++) {
-        obj_x = rand_gen.create_random(tol, env_width-max_obj_size); //x
-        obj_y = rand_gen.create_random(tol, env_height-max_obj_size); //y
+        // set min and max for subgrids to spawn in. Based on subgrid 0, the one with lowest occupancy
+        min_x = this->subgrids[0][1] < tol ? tol: this->subgrids[0][1];
+        min_y = this->subgrids[0][2] < tol ? tol: this->subgrids[0][2];
+        // ensure top left is within bounds+tolerance if it's the rightmost/downmost subgrids
+        max_x = this->subgrids[0][1] + this->subgrids_size == env_width 
+            ? this->subgrids[0][1] + this->subgrids_size - max_obj_size - tol 
+            : this->subgrids[0][1] + this->subgrids_size;
+        max_y = this->subgrids[0][2] + this->subgrids_size == env_height 
+            ? this->subgrids[0][2] + this->subgrids_size - max_obj_size - tol 
+            : this->subgrids[0][2] + this->subgrids_size;
+
+        // initial positions/sizes
+        obj_x = rand_gen.create_random(min_x, max_x); //x
+        obj_y = rand_gen.create_random(min_y, max_y); //y
         obj_width = rand_gen.create_random(min_obj_size, max_obj_size); //width
         obj_height = rand_gen.create_random(min_obj_size, max_obj_size); //height
         
+        // re-initialize position/sizes until it spawns. try 10,000 times for each object
         while (this->is_occupied(tol, obj_x, obj_y, obj_width, obj_height)) {
-            obj_x = rand_gen.create_random(tol, env_width-max_obj_size); //x
-            obj_y = rand_gen.create_random(tol, env_height-max_obj_size); //y
+            obj_x = rand_gen.create_random(min_x, max_x); //x
+            obj_y = rand_gen.create_random(min_y, max_y); //y
             obj_width = rand_gen.create_random(min_obj_size, max_obj_size); //width
             obj_height = rand_gen.create_random(min_obj_size, max_obj_size); //height
             max_iter++;
-            if (max_iter>=5000) {
+            if (max_iter>=10000) {
                 limit_reached = true;
                 break;
             }
         }
         max_iter = 0;
         if (limit_reached) {
-            std::cout << "no space to spawn object number " << i+1 << " after 5000 tries." << std::endl;
+            // std::cout << "no space to spawn object number " << i+1 << " after 10000 tries." << std::endl;
             limit_reached = false;
             continue;
         }
@@ -78,7 +111,14 @@ std::vector<Object> grid_util::create_objects(random_generator &rand_gen, int to
         objects[i].width = obj_width; //width
         objects[i].height = obj_height; //height
         this->occupy_grid(tol, obj_x, obj_y, obj_width, obj_height, 2, "obstacle");
+
+        // sort the subgrid based on lowest occupancy
+        std::stable_sort(subgrids.begin(), subgrids.end(), [](const std::vector<int>& a, const std::vector<int>& b) {
+            return a[0] < b[0];});
     }
+    // for (auto &it: this->subgrids) {
+    //     std::cout << "Subgrid at " << it[1] << ", " << it[2] << " has " << it[0] << " objects." << std::endl;
+    // }    
     return objects;
 }
 
@@ -106,11 +146,31 @@ void grid_util::occupy_grid (int tol, int x, int y, int obj_width, int obj_heigh
             }
         }
     }
-    // std::cout << "Created " << name << " at: (" << x << ", " << y << ") with width " << obj_width << " and height " << obj_height << std::endl;
+    // check which subgrids the object occupies. An object can occupy multiple subgrids
+    bool x_intersect, y_intersect;
+    for (auto &it: this->subgrids) {
+        if (x <= it[1]+this->subgrids_size && it[1] <= x+obj_width) {
+            x_intersect = true;
+        }
+        if (y <= it[2]+this->subgrids_size && it[2] <= y+obj_height) {
+            y_intersect = true;
+        }
+        if (x_intersect && y_intersect) {
+            it[0] += 1;
+            // std::cout << "Subgrid at " << it[1] << ", " << it[2] << " occupied." << std::endl;
+        }
+        // reset
+        x_intersect = false;
+        y_intersect = false;
+    }
 }
 
+// check if portion of grid is occupied before spawning an object
 bool grid_util::is_occupied (int tol, int x, int y, int width, int height) {
+
+    // increment size is min object size + 2*tol (on each side)
     int incr = min_obj_size+2*tol;
+
     // Go over grids efficiently by incrementing by min_obj_size + tolerance
     bool occupied;
 
@@ -189,7 +249,6 @@ int grid_util::is_collision (Object robot) {
             std::cout << "Collision at top right, robot coordinates: " << robot.x << ", " << robot.y << std::endl;
             return 6;
         }
-
     }
     // bottom left
     if (grid[robot.x][robot.y+robot.height] == 2) {
@@ -209,29 +268,8 @@ int grid_util::is_collision (Object robot) {
     }
     return 0;
 }
-// int grid_util::is_collision (Object robot) {
 
-//     // Check the corners. If one of them is occupied by obstacle, it's collision
-//     if (grid[robot.x][robot.y] == 2) {
-//         std::cout << "Collision at top left: " << robot.x << ", " << robot.y << std::endl;
-//         return 1;
-//     }
-//     if (grid[robot.x+robot.width][robot.y] == 2) {
-//         std::cout << "Collision at top right: " << robot.x+robot.width << ", " << robot.y << std::endl;
-//         return 2;
-//     }
-//     if (grid[robot.x][robot.y+robot.height] == 2) {
-//         std::cout << "Collision at bottom left: " << robot.x << ", " << robot.y+robot.height << std::endl;
-//         return 3;
-//     }
-//     if (grid[robot.x+robot.width][robot.y+robot.height] == 2) {
-//         std::cout << "Collision at bottom right: " << robot.x+robot.width << ", " << robot.y+robot.height << std::endl;
-//         return 4;
-//     }
-//     return 0;
-// }
-
-// Function to write a nested vector (grid) to a CSV file
+// Function to write a nested vector (grid) to a CSV file. In case students want to analyze the grid as csv
 void grid_util::writeGridToCSV(const std::string& filename) {
     std::ofstream file(filename);
 

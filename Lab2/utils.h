@@ -21,17 +21,23 @@ class random_generator {
 
 class grid_util {
     int env_width, env_height, min_obj_size, max_obj_size;
-    //Occupancy grid; outer vector represents rows, inner represents columns along each row, initialized to 0's
-    
+    // subgrids for making random spawns more efficient
+    std::vector<std::vector<int>> subgrids;
+    int num_subgrids, subgrids_size;
     public:
-        std::vector<std::vector<int>> grid;
+        // constructor
         grid_util(int, int, int, int);
+
+        // functions
         Object create_object(grid_util &, random_generator&, int, int, int, int, int, int, std::string);
         std::vector<Object> create_objects (random_generator&, int, int);
         void occupy_grid (int, int, int, int, int, int, std::string); 
         bool is_occupied (int, int, int, int, int);
         int is_collision(Object);
         void writeGridToCSV(const std::string&);
+
+        //Occupancy grid; outer vector represents rows, inner represents columns along each row, initialized to 0's
+        std::vector<std::vector<int>> grid;
 };
 
 
