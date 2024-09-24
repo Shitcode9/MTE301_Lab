@@ -1,11 +1,9 @@
 # Labs for MTE301: Programming for Mechatronics
 ## Table of Contents
 
-[Workspace setup](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#workspace-setup) 
-
-[Lab 1: Elementary Robotic Navigation](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-1:-elementary-robotic-navigation) 
-
-[Lab 2: Obstacle Avoidance](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-2:-obstacle-avoidance) 
+[Workspace setup](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#workspace-setup)<br />
+[Lab 1: Elementary Robotic Navigation](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-1-elementary-robotic-navigation)<br /> 
+[Lab 2: Obstacle Avoidance](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-2-obstacle-avoidance) 
 
 ## Workspace setup
 ```git clone https://github.com/TakShimoda/MTE301_Lab```
