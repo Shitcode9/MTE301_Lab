@@ -1,4 +1,4 @@
-# json files for VS Code
+# Debugging in VS Code for WSL
 In this folder, you'll learn how to setup your VS code in WSL to debug your code.
 
 ## Prerequisites
