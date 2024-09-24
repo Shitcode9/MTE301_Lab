@@ -25,8 +25,9 @@ code . # open VS code
 ### Debugger
 Optionally, if you want to use the debugger to observe the stack trace and keep track of variables to observe if your code is working as intended, go to the [VSCode_Files](https://github.com/TakShimoda/MTE301_Lab/tree/master/VSCode_Files) folder and follow the steps there.
 ## Lab 1: Elementary Robotic Navigation
-<img src="https://github.com/user-attachments/assets/d9214c43-6af7-4de7-a8cb-cb3bf2725aef" width="500">
 
+https://github.com/user-attachments/assets/2217eca1-e557-4d3e-a85f-c2e60817cbe6
+ - Task 4 shown above: go up, then horizontally towards the goal.
 After you finish your code (assuming you cloned this repository to the root directory):
 
 ```cd ~/MTE301_Lab/Lab1```
@@ -36,6 +37,9 @@ After you finish your code (assuming you cloned this repository to the root dire
 ```./lab1```
 
 ## Lab 2: Obstacle Avoidance
+
+https://github.com/user-attachments/assets/35c35620-7641-449a-8424-d62ef37bc5e9
+- Example obstacle avoidance with bonus task 3 (obstacle avoidance resulting in shortest path to goal) as well as mechanisms to avoid the robot getting stuck (note: your robot may get stuck at times even with tasks 2 and 3, but that is beyond the scope of the lab.)
 
 After you finish your code (assuming you cloned this repository to the root directory):
 
