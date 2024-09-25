@@ -33,6 +33,17 @@ std::vector<std::vector<int>> robot_pos;
 // Did mission succeed?
 bool succeed;
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++WRITE ANY FUNCTIONS OR GLOBAL VARIABLES HERE+++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// e.g. void my_func() {}
+// e.g. int a = 5;
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 int main(int argc, char const *argv[])
 {
     //==========CREATE ROBOT, GOAL, OBJECTS==========
@@ -59,13 +70,16 @@ int main(int argc, char const *argv[])
     // maximum count. Close the loop after 3600 iterations. As the window is displayed at 60fps, this is 60 seconds.
     int max_count = 0;
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++DEFINE ANY LOCAL VARIABLE HERE+++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     // main loop
     while (true)
     {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++WRITE YOUR CODE HERE++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
     // Example provided: simply loop 3600 times and move the robot right each time. 
         // This will also show a fail message as the succeed variable was never set to true
     // Do not change the while loop as it's made to end after 1 minute. This is to force this loop to eventually end so students can visualize code that gets stuck
@@ -77,6 +91,8 @@ int main(int argc, char const *argv[])
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++END YOUR CODE HERE++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        // place the current robot position at the time step to robot_pos
         robot_pos.push_back({robot.x, robot.y});
         max_count++;
 
@@ -86,6 +102,8 @@ int main(int argc, char const *argv[])
             break;
         }
     }
+
+    // send the results of the code to the renderer
     render_window(robot_pos, objects, robot_init, goal_init, width, height, succeed);
     return 0;
 }
