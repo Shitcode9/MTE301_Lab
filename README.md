@@ -59,8 +59,13 @@ After you finish your code (assuming you cloned this repository to the root dire
 
 ## Lab 2: Obstacle Avoidance
 
+
+
+https://github.com/user-attachments/assets/6b80ef97-2bbb-4bfc-9e9f-6d047793460f
+- **task 3**(bonus): obstacle avoidance that always results in shortest path to goal.
+
 https://github.com/user-attachments/assets/35c35620-7641-449a-8424-d62ef37bc5e9
-- Example obstacle avoidance with bonus task 3 (obstacle avoidance resulting in shortest path to goal) as well as mechanisms to avoid the robot getting stuck (note: your robot may get stuck at times even with tasks 2 and 3, but that is beyond the scope of the lab.)
+- Example obstacle avoidance with bonus task 3 (obstacle avoidance resulting in shortest path to goal) as well as mechanisms to avoid the robot getting stuck (note: your robot may get stuck at times even with tasks 2 and 3, but fixing that is beyond the scope of the lab.)
 
 After you finish your code (assuming you cloned this repository to the root directory):
 
