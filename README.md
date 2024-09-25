@@ -26,8 +26,29 @@ code . # open VS code
 Optionally, if you want to use the debugger to observe the stack trace and keep track of variables to observe if your code is working as intended, go to the [VSCode_Files](https://github.com/TakShimoda/MTE301_Lab/tree/master/VSCode_Files) folder and follow the steps there.
 ## Lab 1: Elementary Robotic Navigation
 
+
+https://github.com/user-attachments/assets/d398575e-7e02-49e8-b974-e67d268c7cd2
+ - **Task 1**: detect wall collision. Robot above goes up until it hits top wall and exits with failure when it does.
+
+https://github.com/user-attachments/assets/62cf708c-e786-4f71-bcaf-82167b891e60
+- **Task 2**: detect goal collision. Robot above goes up until it hits goal and exits with success when it does. (Note: in the above scenario, it just happened the goal was directly above the robot, but you should demonstrated this with task 3/4 navigation methods that ensure the robot goes towards the goal.)
+
 https://github.com/user-attachments/assets/2217eca1-e557-4d3e-a85f-c2e60817cbe6
- - Task 4 shown above: go up, then horizontally towards the goal.
+ - **Task 4**: robot goes up, then horizontally towards the goal. Task 3 is the same but in opposite order.
+
+https://github.com/user-attachments/assets/af54f692-4a1b-4d45-a296-7cb2ec9a2790
+- **Task 5**: case 1 (1<abs(del_y/del_x)<2). Move diagonally 1 pixel at a time in x and y, then after del_x = 0, move in the y direction the rest of the way. 
+
+
+https://github.com/user-attachments/assets/46eade8e-574b-47ef-aaca-8b5725ed6df2
+- **Task 5**: case 2 (1<abs(del_x/del_xy)<2). Move diagonally 1 pixel at a time in x and y, then after del_y = 0, move in the x direction the rest of the way. 
+
+https://github.com/user-attachments/assets/ef3a64a3-c080-4cef-8ee1-0eef8e8caf0b
+- **Task 6**: robot goes in diagonal motion, then vertical towards the center of the goal. The diagonal motion is fast, because abs(del_y/del_x) rounds down to 3, so it moves 3 pixels at a time in the y direction.
+
+https://github.com/user-attachments/assets/f9a064b1-2790-462f-888d-170d1cf10110
+- **Task 7**: robot moves towards the corner with the shortest distance. In this case, it's the bottom right corner.
+
 After you finish your code (assuming you cloned this repository to the root directory):
 
 ```cd ~/MTE301_Lab/Lab1```
