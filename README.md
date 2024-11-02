@@ -5,7 +5,7 @@
 [Lab 1: Elementary Robotic Navigation](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-1-elementary-robotic-navigation)<br /> 
 [Lab 2: Obstacle Avoidance](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-2-obstacle-avoidance)<br /> 
 [Lab 3: Mapping and Wall Following](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-3-mapping-and-wall-following)<br />
-[Lab 4: Mapping, Wall Following, and Sweeping](https://github.com/TakShimoda/MTE301_Lab?tab=readme-ov-file#lab-3-mapping,-wall-following,-and-sweeping)
+[Lab 4: Mapping, Wall Following, and Sweeping](https://github.com/TakShimoda/MTE301_Lab/blob/master/README.md#lab-4-mapping-wall-following-and-sweeping)
 
 ## Workspace setup and Information
 ### Basic setup
