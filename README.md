@@ -82,3 +82,4 @@ After you finish your code (assuming you cloned this repository to the root dire
 
 https://github.com/user-attachments/assets/6788a339-72bd-4ee5-8c9a-6e1ea28d06f5
 
+## Lab 4: Mapping, Wall Following, and Sweeping
