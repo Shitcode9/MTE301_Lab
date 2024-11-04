@@ -85,19 +85,25 @@ https://github.com/user-attachments/assets/6788a339-72bd-4ee5-8c9a-6e1ea28d06f5
 
 ## Lab 4: Mapping, Wall Following, and Sweeping
 
-https://github.com/user-attachments/assets/266ceba2-86a7-4f62-af8d-e356f859bb54
-- **Task 1, Environment 1**: robot follows the walls while mapping. Rendered at 3x the speed.
-
-https://github.com/user-attachments/assets/2867b034-604e-43a0-9f43-e443aa2d5413
-- **Task 2, Environment 1**: following task 1, robot initiates the sweeping algorithm and maps the interior of the walls. Rendered at 3x the speed.
 
 
-https://github.com/user-attachments/assets/b896ceec-62a8-4f44-9aca-aed38c3a4e13
-- **Task 1, Environment 2**: robot follows the walls while mapping. Rendered at 3x the speed.
+https://github.com/user-attachments/assets/4c89cb2d-89fd-4d07-bb34-1239c4088c5c
 
-https://github.com/user-attachments/assets/5ae6de97-2f26-42ac-9ec6-9207bb357dba
-- **Task 2, Environment 2**: following task 1, robot initiates the sweeping algorithm and maps the interior of the walls. Rendered at 3x the speed.
+- **Tasks 1 and 2, Environment 1**: robot follows the walls while mapping (task 1). Following task 1, the robot initiates the sweeping algorithm and maps the interior of the walls. Rendered at 3x the speed.
 
-https://github.com/user-attachments/assets/a6f652b1-cb3a-412c-bb33-ebe5a66dcf1a
+
+https://github.com/user-attachments/assets/be91701d-bdd8-4727-8e93-c59a1177f68f
+
+- **Task 1, Environment 2**: robot follows the walls while mapping. Rendered at 4x the speed.
+
+
+https://github.com/user-attachments/assets/6a1b68a9-fce4-4291-b47b-c2a1f5df7ae6
+
+- **Task 2, Environment 2**: following task 1, robot initiates the sweeping algorithm and maps the interior of the walls. Rendered at 4x the speed.
+
+
+
+https://github.com/user-attachments/assets/d4c64972-949f-4e56-a739-c0347e0f749d
+
 - **Tasks 1 and 2, Environment 3**: robot follows the walls while mapping. Following task 1, robot initiates the sweeping algorithm and maps the interior of the walls. Rendered at 3x the speed.
 
