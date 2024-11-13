@@ -112,15 +112,13 @@ https://github.com/user-attachments/assets/d4c64972-949f-4e56-a739-c0347e0f749d
 ## Lab 5: Mapping, Wall Following, and Sweeping with Obstacles
 
 
-https://github.com/user-attachments/assets/5294cf24-a405-46e5-bbd0-e1e5f8552907
+https://github.com/user-attachments/assets/176cb120-7ab9-41f2-be74-52a30dddb0fb
 
 - **Task 1**: robot sweeps the inner environment after wall following, while avoiding obstacles. Rendered at 3x the speed.
 
-https://github.com/user-attachments/assets/fa467a57-7582-4f97-a638-8c048e4bbb85
+https://github.com/user-attachments/assets/40cd6f7e-6b59-477d-bcea-d7f431238b16
 
 - **Task 2**: robot navigates to the goal, while avoiding obstacles. Rendered at 3x the speed.
-
-
 
 
 
