@@ -107,3 +107,18 @@ https://github.com/user-attachments/assets/d4c64972-949f-4e56-a739-c0347e0f749d
 
 - **Tasks 1 and 2, Environment 3**: robot follows the walls while mapping. Following task 1, robot initiates the sweeping algorithm and maps the interior of the walls. Rendered at 3x the speed.
 
+## Lab 5: Mapping, Wall Following, and Sweeping with Obstacles
+
+
+https://github.com/user-attachments/assets/5294cf24-a405-46e5-bbd0-e1e5f8552907
+
+- **Task 1**: robot sweeps the inner environment after wall following, while avoiding obstacles. Rendered at 3x the speed.
+
+https://github.com/user-attachments/assets/fa467a57-7582-4f97-a638-8c048e4bbb85
+
+- **Task 2**: robot navigates to the goal, while avoiding obstacles. Rendered at 3x the speed.
+
+
+
+
+
