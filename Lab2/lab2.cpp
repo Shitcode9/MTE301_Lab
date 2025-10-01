@@ -32,6 +32,10 @@ std::vector<std::vector<int>> robot_pos;
 
 // Did mission succeed?
 bool succeed;
+int goal_y;
+
+char moving_direction = 'y';
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++WRITE ANY FUNCTIONS OR GLOBAL VARIABLES HERE+++++++++++++++
@@ -43,6 +47,58 @@ bool succeed;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+using namespace std;
+bool obstDetect(const Object& robot, const grid_util& grid){
+    if(grid.grid[robot.x][robot.y] == 2) return true;
+    if(grid.grid[robot.x + robot.width -1][robot.y] == 2) return true;
+    if(grid.grid[robot.x + robot.width -1][robot.y + robot.height-1] == 2) return true;
+    if(grid.grid[robot.x][robot.y+ robot.height-1] == 2) return true;
+    return false;
+}
+
+// Task 2: Clear obstacle by sliding orthogonally
+// direction = 'x' if robot was moving along x, 'y' if along y
+void obstAvoid(Object& robot, char direction,
+                        std::vector<std::vector<int>>& robot_pos) 
+{
+    int move_x = 0;
+    int move_y = 0;
+    
+    if (direction == 'x') {
+        // Was moving in x, so clear obstacle by moving in y
+        // Move up (negative y direction)
+        move_y = -1;
+    } else {
+        // Was moving in y, so clear obstacle by moving in x
+        // Move right (positive x direction)
+        move_x = 1;
+    }
+    
+    // Keep moving perpendicular until obstacle is cleared
+    while (obstDetect(robot, grid)) {
+        robot.x += move_x;
+        robot.y += move_y;
+        robot_pos.push_back({robot.x, robot.y});
+    }
+}
+
+bool reachGoal(const Object& goal, const Object& robot, float radius) {
+    return (robot.x + radius >= goal.x &&
+            robot.x - radius <= goal.x + goal.width &&
+            robot.y + radius >= goal.y &&
+            robot.y - radius <= goal.y + goal.height);
+}
+
+bool checkBoundary(int x, int y){
+    if(x >= width || x <= 0){
+        return true;
+    } 
+    if(y >= height || y <= 0){
+        return true;
+    } 
+    return false;
+}
+
 
 int main(int argc, char const *argv[])
 {
@@ -74,34 +130,98 @@ int main(int argc, char const *argv[])
 //+++++++++++++++DEFINE ANY LOCAL VARIABLE HERE+++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    // main loop
-    while (true)
+
+while (true)
+{
+
+    //First check for obstacle and clear it
+    if (obstDetect(robot, grid))
     {
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//++++++++++++++WRITE YOUR CODE HERE++++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Example provided: simply loop 3600 times and move the robot right each time. 
-        // This will also show a fail message as the succeed variable was never set to true
-    // Do not change the while loop as it's made to end after 1 minute. This is to force this loop to eventually end so students can visualize code that gets stuck
-    // You can define other functions to use outside of the main function if you wish
-    // You may also define your own local variables inside main in addition to your own global variables. Make sure to know your variable scope
+        if(moving_direction == 'y'){
+            // Was moving in y, clear by moving in x
+            if (robot.x < goal.x){
+                robot.x += 1;
+            } else if (robot.x > goal.x){
+                robot.x -= 1;
+            }
+            robot_pos.push_back({robot.x, robot.y});  // ADD THIS LINE
+        } else if(moving_direction == 'x'){
+            // Was moving in x, clear by moving in y
+            if (robot.y < goal.y){
+                robot.y += 1;
+            } else if (robot.y > goal.y){
+                robot.y -= 1;
+            }
+            robot_pos.push_back({robot.x, robot.y});  // ADD THIS LINE
 
-        robot.x += 1;
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//++++++++++++++++END YOUR CODE HERE++++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        // place the current robot position at the time step to robot_pos
-        robot_pos.push_back({robot.x, robot.y});
-        max_count++;
-
-        // if more than a minute passed (in render window), exit
-        if (max_count>=3600) {
-            std::cout << "=====1 minute reached with no solution=====" << std::endl;
-            break;
         }
     }
+
+    // Then do normal movement
+    if (robot.y < goal.y && obstDetect(robot,grid) == false) { 
+        robot.y += 1; 
+        moving_direction = 'y';
+    } else if (robot.y > goal.y && obstDetect(robot,grid) == false) { 
+        robot.y -= 1; 
+        moving_direction = 'y';
+    } else { 
+        if (robot.x < goal.x && obstDetect(robot,grid) == false) { 
+            robot.x += 1; 
+            moving_direction = 'x';
+        } else if (robot.x > goal.x && obstDetect(robot,grid) == false) { 
+            robot.x -= 1; 
+            moving_direction = 'x';
+        }
+    } 
+    if(robot.y == goal.y && obstDetect(robot,grid) == true){
+        while(obstDetect(robot, grid)){
+            for (int i = 0; i < 50; i++) {   
+            robot.y += 1;  
+            robot_pos.push_back({robot.x, robot.y}); 
+            }
+        }
+
+        while (robot.x != goal.x){
+            if (goal.x > robot.x) robot.x++;
+            else if (goal.x < robot.x) robot.x--;
+            robot_pos.push_back({robot.x, robot.y}); 
+        }
+    }
+    if(robot.x == goal.x && obstDetect(robot,grid) == true){
+        while(obstDetect(robot, grid)){
+            for (int i = 0; i < 50; i++) {   
+            robot.x += 1;  
+            robot_pos.push_back({robot.x, robot.y}); 
+            }
+        }
+
+        while (robot.y != goal.y){
+            if (goal.y > robot.y) robot.x++;
+            else if (goal.y < robot.y) robot.y--;
+            robot_pos.push_back({robot.x, robot.y}); 
+        }
+    }
+     
+    
+
+    if(reachGoal(goal, robot, radius)){
+        succeed = true;
+        break;
+    }
+
+
+    // Update position for renderer (ONLY ONCE per iteration)
+    robot_pos.push_back({robot.x, robot.y});
+
+    // Safety timeout
+    max_count++;
+    if (max_count >= 3600) {
+        cout << "=====1 minute reached with no solution=====" << endl;
+        break;
+    }
+}
+
+
 
     // send the results of the code to the renderer
     render_window(robot_pos, objects, robot_init, goal_init, width, height, succeed);
