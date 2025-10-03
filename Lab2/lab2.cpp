@@ -119,8 +119,6 @@ int main(int argc, char const *argv[])
     // also create a copy for predicting collisions
     Object robot_copy = robot;
 
-    // Uncomment this line to write the grid to csv to see the grid as a csv
-    // grid.writeGridToCSV("grid.csv");
 
     robot_pos.push_back({robot.x, robot.y});
 
@@ -135,7 +133,7 @@ int main(int argc, char const *argv[])
 while (true)
 {
 
-    //First check for obstacle and clear it
+    // Check for obstacle then clear it
     if (obstDetect(robot, grid))
     {
         if(moving_direction == 'y'){
@@ -156,7 +154,7 @@ while (true)
         }
     }
 
-    // Then do normal movement
+    // normal movement
     if (robot.y < goal.y && obstDetect(robot,grid) == false) { 
         robot.y += 1; 
         moving_direction = 'y';
