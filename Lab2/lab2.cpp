@@ -139,21 +139,19 @@ while (true)
     if (obstDetect(robot, grid))
     {
         if(moving_direction == 'y'){
-            // Was moving in y, clear by moving in x
             if (robot.x < goal.x){
                 robot.x += 1;
             } else if (robot.x > goal.x){
                 robot.x -= 1;
             }
-            robot_pos.push_back({robot.x, robot.y});  // ADD THIS LINE
+            robot_pos.push_back({robot.x, robot.y});  
         } else if(moving_direction == 'x'){
-            // Was moving in x, clear by moving in y
             if (robot.y < goal.y){
                 robot.y += 1;
             } else if (robot.y > goal.y){
                 robot.y -= 1;
             }
-            robot_pos.push_back({robot.x, robot.y});  // ADD THIS LINE
+            robot_pos.push_back({robot.x, robot.y});  
 
         }
     }
