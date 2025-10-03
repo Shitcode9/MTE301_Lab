@@ -48,6 +48,8 @@ char moving_direction = 'y';
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 using namespace std;
+
+// Task 1 
 bool obstDetect(const Object& robot, const grid_util& grid){
     if(grid.grid[robot.x][robot.y] == 2) return true;
     if(grid.grid[robot.x + robot.width -1][robot.y] == 2) return true;
@@ -56,8 +58,7 @@ bool obstDetect(const Object& robot, const grid_util& grid){
     return false;
 }
 
-// Task 2: Clear obstacle by sliding orthogonally
-// direction = 'x' if robot was moving along x, 'y' if along y
+// Task 2
 void obstAvoid(Object& robot, char direction,
                         std::vector<std::vector<int>>& robot_pos) 
 {
@@ -112,15 +113,18 @@ int main(int argc, char const *argv[])
     // create the objects
     std::vector<Object> objects = grid.create_objects(rand_gen, occupancy_tol, num_objects);
 
-    // create copies of robot and goal with their initial positions 
+    // create copies of robot and goal with their initial positions for purpose of render functions
     Object robot_init = robot;
     Object goal_init = goal;
-    // create a copy for predicting collisions
+    // also create a copy for predicting collisions
     Object robot_copy = robot;
+
+    // Uncomment this line to write the grid to csv to see the grid as a csv
+    // grid.writeGridToCSV("grid.csv");
 
     robot_pos.push_back({robot.x, robot.y});
 
-    // maximum count
+    // maximum count. Close the loop after 3600 iterations. As the window is displayed at 60fps, this is 60 seconds.
     int max_count = 0;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -131,7 +135,7 @@ int main(int argc, char const *argv[])
 while (true)
 {
 
-    // check for obstacle then clear it
+    //First check for obstacle and clear it
     if (obstDetect(robot, grid))
     {
         if(moving_direction == 'y'){
@@ -154,7 +158,7 @@ while (true)
         }
     }
 
-    // Move normally
+    // Then do normal movement
     if (robot.y < goal.y && obstDetect(robot,grid) == false) { 
         robot.y += 1; 
         moving_direction = 'y';
@@ -207,7 +211,7 @@ while (true)
     }
 
 
-    // Update position for renderer 
+    // Update position for renderer (ONLY ONCE per iteration)
     robot_pos.push_back({robot.x, robot.y});
 
     // Safety timeout
