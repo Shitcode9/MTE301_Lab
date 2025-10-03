@@ -33,9 +33,12 @@ std::vector<std::vector<int>> robot_pos;
 // Did mission succeed? Update this to make sure it succeeds if robot reaches goal, failure if it hits wall.
 bool succeed;
 
+
+// Task 7
 struct Point{
     float x,y;
 };
+
 
 Point findCorner(const Object& goal, const Object& robot){
     Point corners[4] = {
@@ -84,7 +87,7 @@ void moveTowards(Object& robot, const Point& target, float speed) {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-// task 1:
+// Task 1
 bool checkBoundary(int x, int y){
     if(x >= width || x <= 0){
         return true;
@@ -95,10 +98,7 @@ bool checkBoundary(int x, int y){
     return false;
 }
 
-// task 2:
-
-
-
+// Task 2
 bool reachGoal(const Object& goal, const Object& robot, float radius) {
     return (robot.x + radius >= goal.x &&
             robot.x - radius <= goal.x + goal.width &&
@@ -119,21 +119,18 @@ int main(int argc, char const *argv[])
     // create the objects
     std::vector<Object> objects = grid.create_objects(rand_gen, occupancy_tol, num_objects);
 
-    // create copies of robot and goal with their initial positions for purpose of render functions
+    // create copies of robot and goal with their initial positions 
     Object robot_init = robot;
     Object goal_init = goal;
 
-
+    // Task 6
     float centerX = goal.x + goal_width / 2.0f;
     float centerY = goal.y + goal_height / 2.0f;
-
-    // uncomment this line to write the grid to csv to see the grid as a csv
-    // grid.writeGridToCSV("grid.csv");
 
     // place the first robot position to robot_pos
     robot_pos.push_back({robot.x, robot.y});
 
-    // maximum count. Close the loop after 3600 iterations. As the window is displayed at 60fps, this is 60 seconds.
+    // maximum count. Close the loop after 3600 iterations.
     int max_count=0;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -154,6 +151,7 @@ int main(int argc, char const *argv[])
     // You can define other functions to use outside of the main function if you wish
     // You may also define your own local variables inside main in addition to your own global variables. Make sure to know your variable scope
 
+    // Task 5
     Point targetCorner {static_cast<float>(goal.x), static_cast<float>(goal.y)};
     moveTowards(robot, targetCorner, 1.0f);
 
