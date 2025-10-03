@@ -112,18 +112,15 @@ int main(int argc, char const *argv[])
     // create the objects
     std::vector<Object> objects = grid.create_objects(rand_gen, occupancy_tol, num_objects);
 
-    // create copies of robot and goal with their initial positions for purpose of render functions
+    // create copies of robot and goal with their initial positions 
     Object robot_init = robot;
     Object goal_init = goal;
-    // also create a copy for predicting collisions
+    // create a copy for predicting collisions
     Object robot_copy = robot;
-
-    // Uncomment this line to write the grid to csv to see the grid as a csv
-    // grid.writeGridToCSV("grid.csv");
 
     robot_pos.push_back({robot.x, robot.y});
 
-    // maximum count. Close the loop after 3600 iterations. As the window is displayed at 60fps, this is 60 seconds.
+    // maximum count
     int max_count = 0;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -134,7 +131,7 @@ int main(int argc, char const *argv[])
 while (true)
 {
 
-    //First check for obstacle and clear it
+    // check for obstacle then clear it
     if (obstDetect(robot, grid))
     {
         if(moving_direction == 'y'){
@@ -157,7 +154,7 @@ while (true)
         }
     }
 
-    // Then do normal movement
+    // Move normally
     if (robot.y < goal.y && obstDetect(robot,grid) == false) { 
         robot.y += 1; 
         moving_direction = 'y';
@@ -210,7 +207,7 @@ while (true)
     }
 
 
-    // Update position for renderer (ONLY ONCE per iteration)
+    // Update position for renderer 
     robot_pos.push_back({robot.x, robot.y});
 
     // Safety timeout
