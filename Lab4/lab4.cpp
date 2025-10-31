@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "render.h"
 
-#define kPI 3.14159265358979323846
+#define PI 3.14159265358979323846
 
 class my_robot : public Object {
 private:
