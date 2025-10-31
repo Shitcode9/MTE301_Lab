@@ -5,7 +5,7 @@
 #include <fstream>
 #include <utility>
 #include <iomanip>
-#include <queue>   // ✅ Added missing include for std::queue
+#include <queue>   // Added missing include for std::queue
 
 #include "utils.h"
 #include "render.h"
@@ -19,7 +19,6 @@
 class my_robot : public Object {
 private:
     int lidar_range{50};
-    int radius{10};
     grid_util* true_grid_ptr = nullptr;
     std::vector<std::vector<int>> grid{800, std::vector<int>(800, -1)};
     std::queue<std::vector<int>> paths_queue;
@@ -27,7 +26,7 @@ private:
     bool clockwise{true};
 
 public:
-    // ✅ Properly forward parameters to Object constructor
+    // Properly forward parameters to Object constructor
     my_robot(int w, int h, int env_width, int y_min, int x_min, int tolerance)
         : Object(w, h, env_width, y_min, x_min, tolerance) {}
 
@@ -50,19 +49,15 @@ public:
         clockwise = !clockwise;
     }
 
-    bool findDirection() {   // ✅ Changed to return bool instead of void
+    bool findDirection() {   // Changed to return bool instead of void
         return clockwise;
     }
 
     // Sense environment and fill predicted grid
     void sensor() {
-        if (!true_grid_ptr) {
-            std::cerr << "Error: true_grid_ptr not initialized.\n";
-            return;
-        }
 
-        int x_c = this->x + radius;
-        int y_c = this->y + radius;
+        int x_c = this->x + 10;
+        int y_c = this->y + 10;
 
         for (int i = x_c - lidar_range; i <= x_c + lidar_range; ++i) {
             for (int j = y_c - lidar_range; j <= y_c + lidar_range; ++j) {
@@ -80,8 +75,8 @@ public:
     // Detect nearby walls (returns 4-directional vector)
     std::vector<int> detect() {
         std::vector<int> direction(4, 0);
-        int x_c = this->x + radius;
-        int y_c = this->y + radius;
+        int x_c = this->x + 10;
+        int y_c = this->y + 10;
         int tolerance = 20;
         const int diagTolerance = tolerance * angle;
 
@@ -131,7 +126,9 @@ public:
                     robot_to_wall = {-1, -1};
                 else if (direction[1] == -1)
                     robot_to_wall = {0, -1};
-            } else {
+            } 
+            
+            else {
                 if (direction[2] == 1)
                     robot_to_wall = {-1, 1};
                 else if (direction[1] == -1)
@@ -236,9 +233,8 @@ int main(int argc, char const* argv[]) {
         limit_count++;
 
         robot.sensor();
-        std::vector<int> dirs = robot.detect();
-        robot.findDirection(dirs);
-        robot.move(robot_to_wall);
+        robot.findDirection(robot.detect());
+        robot.move();
 
         robot_pos.push_back({robot.x, robot.y});
 
