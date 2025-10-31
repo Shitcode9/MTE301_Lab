@@ -9,27 +9,173 @@
 #include "utils.h"
 #include "render.h"
 
+#define PI 3.14159265358979323846
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++Modify my_robot class here+++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // my_robot sub-class
 // modify here so it inherits from the Object class from utils.h
-class my_robot {
-    // define any private or protected members here
+class my_robot : public Object {
+    private:
+        int lidar_range{50};
+        int radius{10};
+        grid_util* true_grid_ptr = nullptr;
+        std::vector<std::vector<int>> grid{800, std::vector<int>(800, -1)};
+        std::queue<std::vector<int>> paths_queue;
+        const float angle = std::cos(45 * PI / 180);
+        bool clockwise{true};
+
     public:
-        // define constructor with necessary parameters
-            // example constructor that simply initializes grid to all -1
-        my_robot() {
-            grid = std::vector<std::vector<int>>(800, std::vector<int>(800, -1));
+
+        my_robot(int w, int h, int env_width, int y_min, int x_min, int tolerance) : Object(w, h, env_width, y_min, x_min, tolerance) {}
+        
+    //TASK 1
+    
+        void createGrid(grid_util& grid) {
+                true_grid_ptr = &grid;
         }
-        // call the constructor of the Object base class
-            // arguments are (width, height, env_width, min_y, max_y, tol)
-        // define the grid that the robot maps. It can be a nested array or vector of size 800x800
-            // example nested vector below
-        std::vector<std::vector<int>> grid;
-        // keep the same sensor developed in lab 3
-        // develop the wall following/sweep algorithms
-        // define any other public members and functions you wish to use
+
+        std::vector<std::vector<int>> getGrid() {
+                return this->grid;
+        }
+
+        grid_util& true_grid() {
+            return *true_grid_ptr;
+        }
+
+        void changeDirection() {
+            clockwise = !clockwise;
+        }
+
+        void findDirection() {
+            return clockwise;
+        }
+
+        void sensor() {
+            int x_c = this->x + 10;
+            int y_c = this->y + 10;
+
+            for (int i = x_c - lidar_range; i <= x_c + lidar_range; ++i) {
+                for (int j = y_c - lidar_range; j <= y_c + lidar_range; ++j) {
+                    if (i >= 0 && i < 800 && j >= 0 && j < 800) {
+                        int dx = i - x_c;
+                        int dy = j - y_c;
+                        if ((dx * dx) + (dy * dy) <= (lidar_range * lidar_range)) {
+                            grid[i][j] = Object::grid_value(g, this, i, j, lidar_range);
+                        }
+                    }
+                }
+            }
+        }
+
+        std::vector<int> detect() {
+            std::vector<int> direction(4, 0);
+            int x_c = this->x + 10;
+            int y_c = this->y + 10;
+            int tolerance = 20;
+            const int diagTolerance = tolerance * angle;
+
+            if (grid[x_c][y_c - tolerance] == 1) 
+                direction[0] = 1;
+
+            else if (grid[x_c][y_c + tolerance] == 1) 
+                direction[0] = -1;
+
+            if (grid[x_c + tolerance][y_c] == 1) 
+                direction[1] = 1;
+
+            else if (grid[x_c - tolerance][y_c] == 1) 
+                direction[1] = -1;
+
+            if (grid[x_c - diagTolerance][y_c - diagTolerance] == 1) 
+                direction[2] = 1;
+
+            else if (grid[x_c + diagTolerance][y_c + diagTolerance] == 1) 
+                direction[2] = -1;
+
+            if (grid[x_c + diagTolerance][y_c - diagTolerance] == 1) 
+                direction[3] = 1;
+
+            else if (grid[x_c - diagTolerance][y_c + diagTolerance] == 1) 
+                direction[3] = -1;
+
+            return direction;
+        }
+
+        void findDirection(const std::vector<int>& direction) {
+            std::vector<int> robot_to_wall(2, 0);
+
+            if (direction[0] == 0 && direction[1] == 0 && direction[2] == 0 && direction[3] == 0) {
+                robot_to_wall = {-1, 0};
+            } 
+            
+            else {
+                if (clockwise) {
+                    if (direction[2] == 1) 
+                        robot_to_wall = {1, -1};
+
+                    if (direction[0] == 1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {1, 0};
+
+                    if (direction[3] == 1) 
+                        robot_to_wall = {1, 1};
+
+                    if (direction[1] == 1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {0, 1};
+
+                    if (direction[2] == -1) 
+                        robot_to_wall = {-1, 1};
+
+                    if (direction[0] == -1 && direction[2] == 0 && direction[3] == 0)
+                        robot_to_wall = {-1, 0};
+
+                    if (direction[3] == -1 && direction[2] != 1) 
+                        robot_to_wall = {-1, -1};
+
+                    if (direction[1] == -1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {0, -1};
+
+                } 
+                
+                else {
+                    if (direction[2] == 1) 
+                        robot_to_wall = {-1, 1};
+
+                    if (direction[1] == -1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {0, 1};
+
+                    if (direction[3] == -1)
+                    robot_to_wall = {1, 1};
+
+                    if (direction[0] == -1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {1, 0};
+
+                    if (direction[2] == -1) 
+                        robot_to_wall = {1, -1};
+
+                    if (direction[1] == 1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {0, -1};
+
+                    if (direction[3] == 1 && direction[2] != 1) 
+                        robot_to_wall = {-1, -1};
+
+                    if (direction[0] == 1 && direction[2] == 0 && direction[3] == 0) 
+                        robot_to_wall = {-1, 0};
+                }
+            }
+
+            paths_queue.push(robot_to_wall);
+        }
+
+        void move() {
+            if (!paths_queue.empty()) {
+                std::vector<int> movement = paths_queue.front();
+                paths_queue.pop();
+                x += movement[0];
+                y += movement[1];
+            }
+        }
 
         // function to save predicted grid
         void save_grid_csv() {
@@ -155,7 +301,11 @@ int main(int argc, char const *argv[])
 //+++++++++++++++WRITE YOUR MAIN LOOP CODE HERE++++++++++++++++++++++
 //++++++++++++++EXAMPLE: ROBOT SIMPLY MOVES LEFT+++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        robot.x -= 1;      
+        robot.sensor();
+
+        robot.detect();
+        robot.findDirection(robot.detect());
+        robot.move();
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
