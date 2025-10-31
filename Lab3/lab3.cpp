@@ -15,7 +15,7 @@
 // modify here so it inherits from the Object class from utils.h
 class my_robot : public Object {
 public:
-    int tol = 20;
+    int tolerance = 20;
     int v = 0, h = 0;
     std::vector<std::vector<int>> grid;
     int lidar_range;
@@ -36,7 +36,7 @@ public:
                 if (i >= 0 && i < 800 && j >= 0 && j < 800) {
                     int dx = i - x_c;
                     int dy = j - y_c;
-                    if (dx * dx + dy * dy <= lidar_range * lidar_range) {
+                    if ((dx * dx) + (dy * dy) <= (lidar_range * lidar_range)) {
                         grid[i][j] = Object::grid_value(g, this, i, j, lidar_range);
                     }
                 }
@@ -44,52 +44,7 @@ public:
         }
     }
 
-    // TASK 2
-
-    void detect(int r) {
-        int x_c = this->x + this->width / 2;
-        int y_c = this->y + this->height / 2;
-
-        if (y - tol >= 0 && this->grid[x][y - tol] == 1) v = 1;
-        else if (y + tol < 800 && this->grid[x][y + tol] == 1) v = -1;
-        else v = 0;
-
-        if (x + tol < 800 && this->grid[x + tol][y] == 1) h = 1;
-        else if (x - tol >= 0 && this->grid[x - tol][y] == 1) h = -1;
-        else h = 0;
-    }
-
-    void move(int h, int v) {
-        if (h == 1 && v == 1) 
-        this->y += 1;
-
-        else if (h == 1 && v == 0) 
-        this->y += 1;
-
-        else if (h == 1 && v == -1)
-        this->x -= 1;
-
-        else if (h == 0 && v == 1) 
-        this->x += 1;
-
-        else if (h == 0 && v == 0) 
-        this->x -= 1;
-
-        else if (h == 0 && v == -1) 
-        this->x -= 1;
-
-        else if (h == -1 && v == 1) 
-        this->x += 1;
-
-        else if (h == -1 && v == 0) 
-        this->y -= 1;
-
-        else if (h == -1 && v == -1) 
-        this->y -= 1;
-    }
-
-
-    // function to save predicted grid to CSV
+        // function to save predicted grid to CSV
     void save_grid_csv() {
         std::string filename = "grid_pred.csv";
         std::ofstream file(filename);
@@ -125,7 +80,60 @@ public:
         file.close();
         std::cout << "Robot's grid written to " << filename << std::endl;
     }
+
+    // TASK 2
+
+    void detect(int r) {
+        int x_c = this->x + 10;
+        int y_c = this->y + 10;
+
+        if (y - tolerance >= 0 && this->grid[x][y - tolerance] == 1) 
+        v = 1;
+
+        else if (y + tolerance < 800 && this->grid[x][y + tolerance] == 1) 
+        v = -1;
+
+        else v = 0;
+
+        if (x + tolerance < 800 && this->grid[x + tolerance][y] == 1) 
+        h = 1;
+
+        else if (x - tolerance >= 0 && this->grid[x - tolerance][y] == 1) 
+        h = -1;
+
+        else h = 0;
+    }
+
+    void move(int h, int v) {
+        if (h == 1 && v == 1) 
+        this->y += 1;
+
+        else if (h == 1 && v == 0) 
+        this->y += 1;
+
+        else if (h == 1 && v == -1)
+        this->x -= 1;
+
+        else if (h == 0 && v == 1) 
+        this->x += 1;
+
+        else if (h == 0 && v == 0) 
+        this->x -= 1;
+
+        else if (h == 0 && v == -1) 
+        this->x -= 1;
+
+        else if (h == -1 && v == 1) 
+        this->x += 1;
+
+        else if (h == -1 && v == 0) 
+        this->y -= 1;
+
+        else if (h == -1 && v == -1) 
+        this->y -= 1;
+    }
 };
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
