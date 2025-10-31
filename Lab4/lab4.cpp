@@ -5,16 +5,11 @@
 #include <fstream>
 #include <utility>
 #include <iomanip>
-#include <queue>   // Added missing include for std::queue
-
+#include <queue>
 #include "utils.h"
 #include "render.h"
 
-#define PI 3.14159265358979323846
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+++++++++++++++++++ my_robot class definition ++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#define kPI 3.14159265358979323846
 
 class my_robot : public Object {
 private:
@@ -22,20 +17,17 @@ private:
     grid_util* true_grid_ptr = nullptr;
     std::vector<std::vector<int>> grid{800, std::vector<int>(800, -1)};
     std::queue<std::vector<int>> paths_queue;
-    const float angle = std::cos(45 * PI / 180);
+    const float angle = std::cos(45 * kPI / 180);
     bool clockwise{true};
 
 public:
-    // Properly forward parameters to Object constructor
-    my_robot(int w, int h, int env_width, int y_min, int x_min, int tolerance)
-        : Object(w, h, env_width, y_min, x_min, tolerance) {}
+    my_robot(int w, int h, int ew, int min_y, int min_x, int tolerance)
+        : Object(w, h, ew, min_y, min_x, tolerance) {}
 
-    // Store pointer to true grid for sensing
     void createGrid(grid_util& grid) {
         true_grid_ptr = &grid;
     }
 
-    // Accessors
     std::vector<std::vector<int>> getGrid() {
         return this->grid;
     }
@@ -44,60 +36,52 @@ public:
         return *true_grid_ptr;
     }
 
-    // Toggle direction
-    void changeDirection() {
+    void switch_dir() {
         clockwise = !clockwise;
     }
 
-    bool findDirection() {   // Changed to return bool instead of void
+    bool get_dir() {
         return clockwise;
     }
 
-    // Sense environment and fill predicted grid
     void sensor() {
+        int x_c = x + 10;
+        int y_c = y + 10;
 
-        int x_c = this->x + 10;
-        int y_c = this->y + 10;
-
-        for (int i = x_c - lidar_range; i <= x_c + lidar_range; ++i) {
-            for (int j = y_c - lidar_range; j <= y_c + lidar_range; ++j) {
-                if (i >= 0 && i < 800 && j >= 0 && j < 800) {
-                    int dx = i - x_c;
-                    int dy = j - y_c;
-                    if ((dx * dx) + (dy * dy) <= (lidar_range * lidar_range)) {
-                        grid[i][j] = Object::grid_value(*true_grid_ptr, this, i, j, lidar_range);
-                    }
+        for (int i = std::max(0, x_c - lidar_range); i < std::min(800, x_c + lidar_range); i++) {
+            for (int j = std::max(0, y_c - lidar_range); j < std::min(800, y_c + lidar_range); j++) {
+                if ((i - x_c) * (i - x_c) + (j - y_c) * (j - y_c) <= lidar_range * lidar_range) {
+                    grid[i][j] = grid_value(true_grid(), this, i, j, lidar_range);
                 }
             }
         }
     }
 
-    // Detect nearby walls (returns 4-directional vector)
     std::vector<int> detect() {
         std::vector<int> direction(4, 0);
-        int x_c = this->x + 10;
-        int y_c = this->y + 10;
+        int x_c = x + 10;
+        int y_c = y + 10;
         int tolerance = 20;
-        const int diagTolerance = tolerance * angle;
+        const int diag_tolerance = tolerance * angle;
 
-        if (grid[x_c][y_c - tolerance] == 1)
+        if (grid[x_c][y_c - tolerance] == 1) 
             direction[0] = 1;
-        else if (grid[x_c][y_c + tolerance] == 1)
+        else if (grid[x_c][y_c + tolerance] == 1) 
             direction[0] = -1;
 
-        if (grid[x_c + tolerance][y_c] == 1)
+        if (grid[x_c + tolerance][y_c] == 1) 
             direction[1] = 1;
-        else if (grid[x_c - tolerance][y_c] == 1)
+        else if (grid[x_c - tolerance][y_c] == 1) 
             direction[1] = -1;
 
-        if (grid[x_c - diagTolerance][y_c - diagTolerance] == 1)
+        if (grid[x_c - diag_tolerance][y_c - diag_tolerance] == 1) 
             direction[2] = 1;
-        else if (grid[x_c + diagTolerance][y_c + diagTolerance] == 1)
+        else if (grid[x_c + diag_tolerance][y_c + diag_tolerance] == 1) 
             direction[2] = -1;
 
-        if (grid[x_c + diagTolerance][y_c - diagTolerance] == 1)
+        if (grid[x_c + diag_tolerance][y_c - diag_tolerance] == 1) 
             direction[3] = 1;
-        else if (grid[x_c - diagTolerance][y_c + diagTolerance] == 1)
+        else if (grid[x_c - diag_tolerance][y_c + diag_tolerance] == 1) 
             direction[3] = -1;
 
         return direction;
@@ -108,42 +92,45 @@ public:
 
         if (direction[0] == 0 && direction[1] == 0 && direction[2] == 0 && direction[3] == 0) {
             robot_to_wall = {-1, 0};
-        } else {
+
+        } 
+        
+        else {
             if (clockwise) {
-                if (direction[2] == 1)
+                if (direction[2] == 1) 
                     robot_to_wall = {1, -1};
-                else if (direction[0] == 1)
+                if (direction[0] == 1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {1, 0};
-                else if (direction[3] == 1)
+                if (direction[3] == 1) 
                     robot_to_wall = {1, 1};
-                else if (direction[1] == 1)
+                if (direction[1] == 1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {0, 1};
-                else if (direction[2] == -1)
+                if (direction[2] == -1) 
                     robot_to_wall = {-1, 1};
-                else if (direction[0] == -1)
+                if (direction[0] == -1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {-1, 0};
-                else if (direction[3] == -1)
+                if (direction[3] == -1 && direction[2] != 1) 
                     robot_to_wall = {-1, -1};
-                else if (direction[1] == -1)
+                if (direction[1] == -1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {0, -1};
             } 
             
             else {
-                if (direction[2] == 1)
+                if (direction[2] == 1) 
                     robot_to_wall = {-1, 1};
-                else if (direction[1] == -1)
+                if (direction[1] == -1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {0, 1};
-                else if (direction[3] == -1)
+                if (direction[3] == -1) 
                     robot_to_wall = {1, 1};
-                else if (direction[0] == -1)
+                if (direction[0] == -1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {1, 0};
-                else if (direction[2] == -1)
+                if (direction[2] == -1) 
                     robot_to_wall = {1, -1};
-                else if (direction[1] == 1)
+                if (direction[1] == 1 && direction[2] == 0 && direction[3] == 0) 
                     robot_to_wall = {0, -1};
-                else if (direction[3] == 1)
+                if (direction[3] == 1 && direction[2] != 1) 
                     robot_to_wall = {-1, -1};
-                else if (direction[0] == 1)
+                if (direction[0] == 1 && direction[2] == 0 && direction[3] == 0)
                     robot_to_wall = {-1, 0};
             }
         }
@@ -151,7 +138,6 @@ public:
         paths_queue.push(robot_to_wall);
     }
 
-    // Move the robot according to queued path
     void move() {
         if (!paths_queue.empty()) {
             std::vector<int> movement = paths_queue.front();
@@ -161,10 +147,10 @@ public:
         }
     }
 
-    // Save predicted grid to CSV
     void save_grid_csv() {
         std::string filename = "grid_pred.csv";
         std::ofstream file(filename);
+
         if (!file.is_open()) {
             std::cerr << "Error: Could not open file " << filename << std::endl;
             return;
@@ -172,17 +158,13 @@ public:
 
         size_t maxRowSize = 0;
         for (const auto& col : grid) {
-            if (col.size() > maxRowSize) {
-                maxRowSize = col.size();
-            }
+            if (col.size() > maxRowSize) maxRowSize = col.size();
         }
 
         for (size_t row = 0; row < maxRowSize; ++row) {
             for (size_t col = 0; col < grid.size(); ++col) {
-                if (row < grid[col].size())
-                    file << grid[col][row];
-                if (col < grid.size() - 1)
-                    file << ",";
+                if (row < grid[col].size()) file << grid[col][row];
+                if (col < grid.size() - 1) file << ",";
             }
             file << "\n";
         }
