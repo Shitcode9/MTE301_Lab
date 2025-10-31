@@ -28,8 +28,8 @@ public:
     // TASK 1
 
     void sensor(grid_util& g) {
-        int x_c = this->x + this->width / 2;
-        int y_c = this->y + this->height / 2;
+        int x_c = this->x + 10;
+        int y_c = this->y + 10;
 
         for (int i = x_c - lidar_range; i <= x_c + lidar_range; ++i) {
             for (int j = y_c - lidar_range; j <= y_c + lidar_range; ++j) {
