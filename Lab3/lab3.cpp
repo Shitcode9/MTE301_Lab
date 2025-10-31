@@ -15,7 +15,7 @@
 // modify here so it inherits from the Object class from utils.h
 class my_robot : public Object {
 public:
-    int tol = 5;
+    int tol = 20;
     int v = 0, h = 0;
     std::vector<std::vector<int>> grid;
     int lidar_range;
@@ -27,10 +27,6 @@ public:
 
     // TASK 1
 
-    // sensor: fill in local grid entries using the provided grid_util instance
-    // NOTE: I'm calling g.grid_value(this->grid, this, ix, iy, lidar_range)
-    // based on your comment: "arguments are (grid_util, this, x query, y query, range)"
-    // If your utils.h uses a different signature, change this call accordingly.
     void sensor(grid_util& g) {
         int x_c = this->x + this->width / 2;
         int y_c = this->y + this->height / 2;
@@ -64,43 +60,34 @@ public:
     }
 
     void move(int h, int v) {
+        if (h == 1 && v == 1) 
+        this->y += 1;
 
-        if(h == 0, v == 0) {
-            this->x -= 1; 
-        }
+        else if (h == 1 && v == 0) 
+        this->y += 1;
 
-        else if (h == -1, v == 0) {
-            this->y -= 1; 
-        } 
+        else if (h == 1 && v == -1)
+        this->x -= 1;
 
-        else if (h == -1, v == 1) {
-            this->x += 1; 
-        } 
+        else if (h == 0 && v == 1) 
+        this->x += 1;
 
-        else if (h == 0, v == 1) {
-            this->x += 1; 
-        } 
+        else if (h == 0 && v == 0) 
+        this->x -= 1;
 
-        else if (h == 1, v == 1) {
-            this->y += 1; 
-        } 
+        else if (h == 0 && v == -1) 
+        this->x -= 1;
 
-        else if (h == 1, v == 0) {
-            this->y += 1; 
-        } 
+        else if (h == -1 && v == 1) 
+        this->x += 1;
 
-        else if (h == 1, v == -1) {
-            this->x -= 1; 
-        } 
+        else if (h == -1 && v == 0) 
+        this->y -= 1;
 
-        else if (h == 0, v == -1) {
-            this->x -= 1; 
-        } 
-
-        else if (h == -1, v == -1) {
-            this->y -= 1; 
-        } 
+        else if (h == -1 && v == -1) 
+        this->y -= 1;
     }
+
 
     // function to save predicted grid to CSV
     void save_grid_csv() {
@@ -194,8 +181,6 @@ int main(int argc, char const *argv[])
         robot.sensor(grid);
         robot.detect(radius);
         robot.move(robot.h, robot.v);
-
-         robot.x -= 1;
 
         robot_pos.push_back({robot.x, robot.y});
 
